@@ -51,9 +51,7 @@ class VAE:
     def compile(self, learning_rate=0.0001):
         optimizer = Adam(learning_rate=learning_rate)
         self.model.compile(optimizer=optimizer,
-                           loss=self._calculate_combined_loss,
-                           metrics=[self._calculate_reconstruction_loss,
-                                    self._calculate_kl_loss])
+                           loss=self._calculate_combined_loss)
 
     def train(self, x_train, batch_size, num_epochs):
         self.model.fit(x_train,
@@ -241,14 +239,5 @@ class VAE:
         return x
 
 
-if __name__ == "__main__":
-    autoencoder = VAE(
-        input_shape=(28, 28, 1),
-        conv_filters=(32, 64, 64, 64),
-        conv_kernels=(3, 3, 3, 3),
-        conv_strides=(1, 2, 2, 1),
-        latent_space_dim=2
-    )
-    autoencoder.summary()
 
 

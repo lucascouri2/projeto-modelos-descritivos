@@ -109,15 +109,14 @@ class Saver:
 class PreprocessingPipeline:
     '''Processa arquivos de audio em um diretorio'''
 
-    def __init__(self, sr, duration, mono, frame_size, hop_length, sp_save_dir, min_max_save_dir):
+    def __init__(self):
 
-        # Instanciando objetos 
-        self.padder = Padder()
-        self.extractor = LogSpectrogramExtractor(frame_size, hop_length)
-        self.normaliser = MinMaxNormaliser(0, 1)
-        self.saver = Saver(sp_save_dir, min_max_save_dir)
+        self.padder = None
+        self.extractor = None
+        self.normaliser = None
+        self.saver = None
         self.min_max_values = {}
-        self._loader = Loader(sr, duration, mono)
+        self._loader = None
         self._num_expected_samples = None
         
         
@@ -170,30 +169,3 @@ class PreprocessingPipeline:
         }
         
         
-        
-# if __name__ == "__main__":
-#     FRAME_SIZE = 512
-#     HOP_LENGTH = 256
-#     DURATION = 0.74  # em segundos
-#     SAMPLE_RATE = 22050
-#     MONO = True
-
-#     SPECTROGRAMS_SAVE_DIR = "data/fsdd/spectrograms/"
-#     MIN_MAX_VALUES_SAVE_DIR = "data/fsdd/"
-#     FILES_DIR = "data/recordings/"
-
-#     # instantiate all objects
-#     loader = Loader(SAMPLE_RATE, DURATION, MONO)
-#     padder = Padder()
-#     log_spectrogram_extractor = LogSpectrogramExtractor(FRAME_SIZE, HOP_LENGTH)
-#     min_max_normaliser = MinMaxNormaliser(0, 1)
-#     saver = Saver(SPECTROGRAMS_SAVE_DIR, MIN_MAX_VALUES_SAVE_DIR)
-
-#     preprocessing_pipeline = PreprocessingPipeline()
-#     preprocessing_pipeline.loader = loader
-#     preprocessing_pipeline.padder = padder
-#     preprocessing_pipeline.extractor = log_spectrogram_extractor
-#     preprocessing_pipeline.normaliser = min_max_normaliser
-#     preprocessing_pipeline.saver = saver
-
-#     preprocessing_pipeline.process(FILES_DIR)

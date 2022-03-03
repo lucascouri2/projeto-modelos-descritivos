@@ -1,15 +1,6 @@
 import os
-
 import numpy as np
-
 from autoencoder import VAE
-
-
-LEARNING_RATE = 0.0005
-BATCH_SIZE = 64
-EPOCHS = 150
-
-SPECTROGRAMS_PATH = "data/fsdd/spectrograms/"
 
 
 def load_fsdd(spectrograms_path):
@@ -37,8 +28,3 @@ def train(x_train, learning_rate, batch_size, epochs):
     autoencoder.train(x_train, batch_size, epochs)
     return autoencoder
 
-
-if __name__ == "__main__":
-    x_train = load_fsdd(SPECTROGRAMS_PATH)
-    autoencoder = train(x_train, LEARNING_RATE, BATCH_SIZE, EPOCHS)
-    autoencoder.save("model")
