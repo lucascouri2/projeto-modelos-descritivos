@@ -17,12 +17,12 @@ def load_fsdd(spectrograms_path):
 
 def train(x_train, learning_rate, batch_size, epochs):
     shape = x_train.shape
-    dimention_1 = shape[1]
-    dimention_2 = shape[2]
+    dimension_1 = shape[1]
+    dimension_2 = shape[2]
 
 
     autoencoder = VAE(
-        input_shape=(dimention_1, dimention_2, 1),
+        input_shape=(dimension_1, dimension_2, 1),
         conv_filters=(512, 256, 128, 64, 32),
         conv_kernels=(3, 3, 3, 3, 3),
         conv_strides=(2, 2, 2, 2, (2, 1)),
