@@ -13,9 +13,12 @@ class Loader:
         self.mono = mono
         
     
-    def load(self, file_path):
-        signal = librosa.load(file_path, sr=self.sample_rate, duration=self.duration, mono=self.mono)[0]
-        return signal
+    def load(self, file_path, is_music):
+        signal1 = librosa.load(file_path, sr=self.sample_rate, duration=self.duration, mono=self.mono)[0]
+        signal2 = None
+        if is_music:
+            signal2 = librosa.load(file_path, sr=self.sample_rate, offset=self.duration,  duration=self.duration, mono=self.mono)[0]
+        return (signal1, signal2)
     
     
     
@@ -131,23 +134,26 @@ class PreprocessingPipeline:
         self._num_expected_samples = int(loader.sample_rate * loader.duration)
         
         
-    def process(self, audio_files_dir):
+    def process(self, audio_files_dir, is_music):
         for root, _, files in os.walk(audio_files_dir):
             for file in files:
                 file_path = os.path.join(root, file)
-                self._process_file(file_path)
+                self._process_file(file_path, is_music)
                 print(f"Processed file {file_path}")
         self.saver.save_min_max_values(self.min_max_values)
         
         
-    def _process_file(self, file_path):
-        signal = self.loader.load(file_path) #1 - Carrega arquivo
-        if self._is_padding_necessary(signal): #2 - Aplica padding se necessario
-            signal = self._apply_padding(signal)
-        feature = self.extractor.extract(signal) #3 - Extrai o spectrogram
-        norm_feature = self.normaliser.normalise(feature) #4 - Normalisa os dados
-        save_path = self.saver.save_feature(norm_feature, file_path)
-        self._store_min_max_value(save_path, feature.min(), feature.max())
+    def _process_file(self, file_path, is_music):
+        signals = self.loader.load(file_path, is_music) #1 - Carrega arquivo -> Retora 2 se musica
+
+        range_value = 2 if is_music else 1 #Opera duas vezes se música
+        for signal, index in zip(signals,range(range_value)):
+            if self._is_padding_necessary(signal): #2 - Aplica padding se necessario
+                signal = self._apply_padding(signal)
+            feature = self.extractor.extract(signal) #3 - Extrai o spectrogram
+            norm_feature = self.normaliser.normalise(feature) #4 - Normalisa os dados
+            save_path = self.saver.save_feature(norm_feature, file_path+f"-{index}")
+            self._store_min_max_value(save_path, feature.min(), feature.max())
 
 
     def _is_padding_necessary(self, signal):
